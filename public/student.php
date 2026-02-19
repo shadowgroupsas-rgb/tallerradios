@@ -31,7 +31,7 @@ require_login();
     <div id="assignment-content" class="hidden">
         <div class="glass-panel" style="border-left: 5px solid var(--secondary);">
             <h2 id="scenario-name">Escenario</h2>
-            <p id="scenario-desc" style="font-size: 1.1em; color: #ccc;"></p>
+            <p id="scenario-desc" style="font-size: 1.1em; color: #555;"></p>
         </div>
 
         <div style="display: flex; gap: 20px;">
@@ -92,7 +92,7 @@ async function loadAssignment() {
             const memDiv = document.getElementById('group-members');
             members.forEach(m => {
                 memDiv.innerHTML += `
-                    <div style="display: inline-block; background: rgba(0,0,0,0.5); padding: 10px; margin: 5px; border: 1px solid var(--primary);">
+                    <div style="display: inline-block; background: #fff; padding: 10px; margin: 5px; border: 1px solid var(--primary); box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
                         <strong>${m.username}</strong><br>
                         <small>Radio: ${m.radio_code}</small>
                     </div>

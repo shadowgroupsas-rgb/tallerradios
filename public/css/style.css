@@ -1,10 +1,11 @@
 :root {
-    --bg-color: #050b14;
-    --panel-bg: rgba(16, 26, 41, 0.8);
-    --primary: #00f3ff;
-    --secondary: #ff9d00;
-    --text-color: #e0e6ed;
-    --danger: #ff4444;
+    --bg-color: #f7f7f7; /* Soft white/light grey */
+    --panel-bg: rgba(255, 255, 255, 0.95);
+    --primary: #ce1126; /* Red Cross Red */
+    --secondary: #333333; /* Dark Grey for tech accents */
+    --text-color: #111111;
+    --danger: #ce1126;
+    --accent: #ff4d4d;
 }
 
 body {
@@ -16,15 +17,15 @@ body {
     overflow-x: hidden;
 }
 
-/* Futuristic Background Grid */
+/* Subtle Tech Pattern - Crosses */
 body::before {
     content: "";
     position: fixed;
     top: 0; left: 0; width: 100%; height: 100%;
     background:
-        linear-gradient(rgba(0, 243, 255, 0.03) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(0, 243, 255, 0.03) 1px, transparent 1px);
-    background-size: 40px 40px;
+        radial-gradient(circle, #ce1126 1px, transparent 1px);
+    background-size: 50px 50px;
+    opacity: 0.03;
     z-index: -1;
 }
 
@@ -32,7 +33,10 @@ h1, h2, h3 {
     text-transform: uppercase;
     letter-spacing: 2px;
     color: var(--primary);
-    text-shadow: 0 0 10px rgba(0, 243, 255, 0.5);
+    text-shadow: none; /* Removed neon glow for clean look */
+    border-bottom: 2px solid var(--primary);
+    display: inline-block;
+    padding-bottom: 5px;
 }
 
 .container {
@@ -41,53 +45,57 @@ h1, h2, h3 {
     padding: 20px;
 }
 
-/* Glass Panel */
+/* Glass Panel - Modern White */
 .glass-panel {
     background: var(--panel-bg);
-    border: 1px solid rgba(0, 243, 255, 0.2);
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
-    backdrop-filter: blur(10px);
+    border: 1px solid #e0e0e0;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(5px);
     border-radius: 8px;
     padding: 20px;
     margin-bottom: 20px;
+    color: var(--text-color);
 }
 
 /* Forms */
 input, select, textarea {
-    background: rgba(0, 0, 0, 0.3);
-    border: 1px solid var(--primary);
-    color: var(--text-color);
+    background: #ffffff;
+    border: 1px solid #ccc;
+    color: #333;
     padding: 10px;
     border-radius: 4px;
     width: 100%;
     box-sizing: border-box;
     margin-bottom: 10px;
+    transition: border-color 0.3s;
 }
 
 input:focus, select:focus {
     outline: none;
-    box-shadow: 0 0 10px rgba(0, 243, 255, 0.3);
+    border-color: var(--primary);
+    box-shadow: 0 0 5px rgba(206, 17, 38, 0.3);
 }
 
 button {
-    background: linear-gradient(45deg, var(--primary), #0077ff);
+    background: linear-gradient(135deg, var(--primary), #a60e1e);
     border: none;
-    color: #000;
+    color: white;
     padding: 10px 20px;
     font-weight: bold;
     text-transform: uppercase;
     cursor: pointer;
     border-radius: 4px;
     transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(206, 17, 38, 0.3);
 }
 
 button:hover {
-    transform: scale(1.05);
-    box-shadow: 0 0 15px var(--primary);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(206, 17, 38, 0.4);
 }
 
 button.danger {
-    background: linear-gradient(45deg, var(--danger), #cc0000);
+    background: #333;
     color: white;
 }
 
@@ -97,21 +105,23 @@ button.danger {
     justify-content: space-between;
     align-items: center;
     padding: 15px 30px;
-    border-bottom: 1px solid var(--primary);
-    background: rgba(0,0,0,0.8);
+    border-bottom: 4px solid var(--primary); /* Thick red line */
+    background: #ffffff;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
 }
 
 .nav-link {
-    color: var(--text-color);
+    color: var(--secondary);
     text-decoration: none;
     margin-left: 20px;
     border-bottom: 2px solid transparent;
-    transition: border-color 0.3s;
+    transition: all 0.3s;
+    font-weight: 500;
 }
 
 .nav-link:hover {
-    border-bottom-color: var(--secondary);
-    color: var(--secondary);
+    border-bottom-color: var(--primary);
+    color: var(--primary);
 }
 
 /* Login Page Specific */
@@ -120,11 +130,13 @@ button.danger {
     justify-content: center;
     align-items: center;
     height: 100vh;
+    background: linear-gradient(135deg, #f7f7f7 0%, #e0e0e0 100%);
 }
 
 .login-box {
     width: 400px;
     text-align: center;
+    border-top: 5px solid var(--primary);
 }
 
 /* Utility */
@@ -142,19 +154,25 @@ table {
 th, td {
     padding: 12px;
     text-align: left;
-    border-bottom: 1px solid rgba(255,255,255,0.1);
+    border-bottom: 1px solid #ddd;
+    color: var(--text-color);
 }
 th {
-    color: var(--secondary);
+    background-color: #f0f0f0;
+    color: var(--primary);
+    font-weight: bold;
+    text-transform: uppercase;
+    font-size: 0.9em;
 }
 
-/* Simulation HUD */
+/* Simulation HUD - Keep somewhat dark for contrast over 3D, or use semi-transparent white */
 #simulation-container {
     position: relative;
     width: 100%;
-    height: 80vh;
-    border: 1px solid var(--primary);
+    height: 100vh; /* Full screen */
+    border: 1px solid #ccc;
     overflow: hidden;
+    background-color: #f0f0f0; /* Fallback */
 }
 
 #hud-overlay {
@@ -162,19 +180,44 @@ th {
     top: 20px;
     left: 20px;
     color: var(--primary);
-    pointer-events: none; /* Let clicks pass through to 3D */
+    pointer-events: none;
     z-index: 10;
 }
 
-.ptt-indicator {
-    width: 20px;
-    height: 20px;
-    background-color: red;
-    border-radius: 50%;
-    display: inline-block;
-    opacity: 0.2;
+/* Override HUD specifically for simulation page to be readable on dark or light bg */
+/* Actually, let's make HUD match the theme: White boxes with red borders */
+.hud-panel {
+    background: rgba(255, 255, 255, 0.9) !important;
+    border: 2px solid var(--primary) !important;
+    color: #333 !important;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
 }
-.ptt-indicator.active {
-    opacity: 1;
-    box-shadow: 0 0 10px red;
+
+#channel-display {
+    color: var(--primary) !important;
+    font-weight: bold;
+}
+
+#status-text {
+    color: var(--primary) !important; /* Instead of lime green */
+    font-weight: bold;
+}
+
+#log-panel {
+    color: #333 !important;
+    font-family: monospace;
+    background: rgba(255,255,255,0.9) !important;
+    border: 1px solid #ccc !important;
+}
+
+#ptt-btn {
+    background: #ce1126 !important;
+    border: 4px solid white !important;
+    box-shadow: 0 0 10px rgba(0,0,0,0.3) !important;
+}
+
+#ptt-btn.active {
+    background: #a60e1e !important;
+    transform: scale(0.95);
+    box-shadow: inset 0 0 10px rgba(0,0,0,0.5) !important;
 }

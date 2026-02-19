@@ -88,7 +88,7 @@ require_role('admin');
                     <h4>Crear Escenario</h4>
                     <form id="create-scenario-form">
                         <input type="text" name="name" placeholder="Nombre Escenario" required>
-                        <textarea name="description" placeholder="Descripción de la misión..." rows="4" style="background: rgba(0,0,0,0.3); color: white; border: 1px solid var(--primary); width: 100%;"></textarea>
+                        <textarea name="description" placeholder="Descripción de la misión..." rows="4" style="width: 100%;"></textarea>
                         <button type="submit">Crear Escenario</button>
                     </form>
 
@@ -246,12 +246,12 @@ async function loadGroups() {
         const memberNames = members.map(m => `<span style="background: var(--primary); color: black; padding: 2px 5px; border-radius: 4px; font-size: 0.8em; margin-right: 5px;">${m.username} (${m.radio_code})</span>`).join('');
 
         list.innerHTML += `
-            <div style="background: rgba(255,255,255,0.05); padding: 10px; margin-bottom: 10px; border-left: 3px solid var(--secondary);">
+            <div style="background: #f9f9f9; border: 1px solid #ddd; padding: 10px; margin-bottom: 10px; border-left: 3px solid var(--secondary);">
                 <div style="display: flex; justify-content: space-between;">
                     <strong>${g.name}</strong>
                     <button onclick="openAssignModal(${g.id})" style="font-size: 0.8em; padding: 5px;">+ Miembro</button>
                 </div>
-                <div style="margin-top: 5px;">${memberNames || '<em style="color:gray">Sin miembros</em>'}</div>
+                <div style="margin-top: 5px;">${memberNames || '<em style="color:#666">Sin miembros</em>'}</div>
             </div>
         `;
     }

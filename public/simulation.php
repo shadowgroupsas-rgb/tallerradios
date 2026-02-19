@@ -20,35 +20,36 @@ $user = [
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
     <style>
-        body { margin: 0; overflow: hidden; background: #000; }
+        body { margin: 0; overflow: hidden; background: #f0f0f0; } /* Light background for 3D */
         #simulation-container { width: 100vw; height: 100vh; border: none; }
         #hud {
             position: absolute; top: 20px; left: 20px; pointer-events: none;
             font-family: 'Orbitron', monospace; color: var(--primary);
         }
-        .hud-panel {
-            background: rgba(0, 20, 40, 0.8);
-            border: 1px solid var(--primary);
-            padding: 15px;
-            margin-bottom: 10px;
-            pointer-events: auto; /* Allow interaction if needed */
-        }
-        #channel-display { font-size: 2em; color: var(--secondary); text-align: center; }
+        /* HUD Panel style overrides style.css for 3D context if needed, but style.css is already good */
+
+        #channel-display { font-size: 2em; color: var(--primary); text-align: center; }
+
+        /* Floating PTT Button */
         #ptt-btn {
             position: absolute; bottom: 50px; right: 50px;
             width: 100px; height: 100px; border-radius: 50%;
-            background: #333; border: 4px solid #555;
+            background: #ce1126; /* Red */
+            border: 5px solid #fff;
             color: white; font-weight: bold; cursor: pointer;
             z-index: 100;
             display: flex; align-items: center; justify-content: center;
             user-select: none;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            font-size: 1.2em;
         }
         #ptt-btn:active, #ptt-btn.active {
-            background: red; border-color: darkred; box-shadow: 0 0 20px red;
+            background: #a60e1e; /* Darker Red */
+            transform: scale(0.95);
         }
         #log-panel {
             position: absolute; bottom: 20px; left: 20px; width: 300px; height: 150px;
-            overflow-y: auto; font-size: 0.8em; color: lime;
+            overflow-y: auto; font-size: 0.8em; color: #333;
         }
         /* Operator Controls */
         #operator-controls {
@@ -69,7 +70,7 @@ $user = [
     </div>
 
     <div class="hud-panel" id="status-panel">
-        STATUS: <span id="status-text" style="color: lime">ONLINE</span>
+        STATUS: <span id="status-text" style="color: #28a745; font-weight: bold;">ONLINE</span>
     </div>
 </div>
 

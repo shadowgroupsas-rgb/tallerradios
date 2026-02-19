@@ -52,4 +52,4 @@ INSERT INTO roles (name, description) VALUES
 -- Insert Default Admin (Password: admin123)
 -- The role_id 1 corresponds to 'admin' inserted above
 INSERT INTO users (username, email, password_hash, role_id) VALUES
-('admin', 'admin@cruzroja.org', 'y0/c/e/C1.o/wwGQO7/zwsexxrypy8duARcXPh3PY0KP7RxC', 1);
+('admin', 'admin@cruzroja.org', '$2y$10$x53V90n2MIaAyTka/4uk/ObVyiiwVHnJoLJjSdCRsIy2Jrv/ibl3S', 1);
