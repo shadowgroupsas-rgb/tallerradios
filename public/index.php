@@ -1,4 +1,12 @@
 <?php
+// public/index.php
+
+// Auto-detect installation
+if (!file_exists(__DIR__ . '/../config/db.php')) {
+    header("Location: install/index.php");
+    exit();
+}
+
 require_once __DIR__ . '/../src/auth.php';
 
 // Redirect if already logged in

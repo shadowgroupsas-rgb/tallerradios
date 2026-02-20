@@ -109,6 +109,19 @@ $user = [
     // For cPanel, this might be the same domain if proxied, or a specific port.
     // We default to port 3000 for this demo.
     window.SIGNALING_SERVER = window.location.protocol + '//' + window.location.hostname + ':3000';
+
+    // Load dynamic config if exists
+    if (window.SIGNALING_CONFIG) {
+        window.SIGNALING_SERVER = window.SIGNALING_CONFIG;
+    }
+</script>
+
+<!-- Configuration from Installer -->
+<script src="js/config.js"></script>
+<script>
+    if (typeof window.SIGNALING_SERVER_CONFIG !== 'undefined') {
+        window.SIGNALING_SERVER = window.SIGNALING_SERVER_CONFIG;
+    }
 </script>
 
 <!-- Libraries -->
