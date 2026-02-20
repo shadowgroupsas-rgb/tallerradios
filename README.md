@@ -1,45 +1,50 @@
-# Sistema de Simulación de Radio - Cruz Roja
-
-Plataforma web para entrenamiento de telemática, diseñada para un despliegue sencillo en cPanel.
+# Sistema de Simulación de Radio - Cruz Roja (cPanel)
 
 ## Características
 
-*   **Autoinstalador Web:** Configuración guiada de base de datos y usuario administrador.
 *   **Roles:** Administrador, Estudiante, Operador de Central.
 *   **Simulación 3D:** Modelos DEP450 y DEM500.
 *   **Audio PTT:** WebRTC en tiempo real.
+*   **Autoinstalador Web:** Configuración rápida.
 
 ## Instrucciones de Instalación en cPanel
 
-### 1. Preparar Base de Datos
-1.  En cPanel, vaya a **Bases de Datos MySQL**.
-2.  Cree una nueva base de datos (ej: `cruzroja_radio`).
-3.  Cree un usuario MySQL y asígnele permisos completos sobre la base de datos creada.
-4.  **No necesita importar SQL manualmente**, el instalador lo hará por usted.
+### 1. Preparación de Archivos
+1.  Descargue el archivo `cruzroja_radio_deploy.zip`.
+2.  Extraiga este archivo en su computadora local. Verá dos carpetas principales: `public_html` y `server`.
 
-### 2. Subir Archivos
-1.  Suba el contenido de este repositorio a `public_html` (o subdominio).
-2.  Asegúrese de que la carpeta `public` sea el directorio raíz web (Document Root), o mueva el contenido de `public` a la raíz y las carpetas `src`, `config`, `server` al nivel superior para mayor seguridad.
-    *   *Nota para Hosting Compartido:* Si no puede cambiar el Document Root, puede subir todo y acceder a `su-dominio.com/public/`.
+### 2. Configurar la Aplicación Node.js (Audio)
+**IMPORTANTE:** Este paso es crítico para que el audio funcione.
 
-### 3. Ejecutar Instalador
-1.  Abra su navegador y vaya a la URL de su sitio (ej: `https://su-dominio.com/public/`).
-2.  Será redirigido automáticamente a la pantalla de instalación.
-3.  Ingrese los datos de la base de datos (Host, Nombre, Usuario, Contraseña) que creó en el paso 1.
-4.  Defina su usuario y contraseña de Administrador.
-5.  (Opcional) Ingrese la URL de su servidor de señalización Node.js (ver abajo).
-6.  Haga clic en **Instalar**.
-7.  Al finalizar, elimine la carpeta `public/install` por seguridad.
+1.  En cPanel, vaya al Administrador de Archivos.
+2.  Navegue a su carpeta raíz (generalmente `/home/su_usuario/`).
+3.  Cree una carpeta llamada `server`.
+4.  Suba el contenido de la carpeta `server` extraída (archivos `index.js`, `package.json`, `package-lock.json`) dentro de esta carpeta `/home/su_usuario/server`.
+    *   **Verifique:** Asegúrese de que `package.json` esté visible en esa carpeta.
+5.  Vuelva al panel principal de cPanel y busque **Setup Node.js App**.
+6.  Haga clic en **Create Application**.
+    *   **Node.js Version:** 14.x o superior.
+    *   **Application mode:** Production.
+    *   **Application root:** `server` (esto apunta a la carpeta que acaba de crear).
+    *   **Application URL:** `radio-signal` (o cualquier nombre, ej: `app`).
+    *   **Application startup file:** `index.js`.
+7.  Haga clic en **Create**.
+8.  Una vez creada, si ve un botón **Run NPM Install**, haga clic en él. Esto instalará las dependencias necesarias.
+    *   *Si el botón está deshabilitado o muestra advertencia, verifique que `package.json` esté en la carpeta `server`.*
+9.  Copie la URL completa de su aplicación (ej: `https://sudominio.com/radio-signal`) para usarla en el paso 4.
 
-### 4. Servidor de Señalización (Node.js)
-El audio requiere un servidor Node.js.
-1.  En cPanel -> **Setup Node.js App**.
-2.  Cree una app apuntando a la carpeta `server`.
-3.  Instale dependencias (`npm install`).
-4.  Copie la URL de la app y péguela en el instalador web (Paso 3) o edite `public/js/config.js` posteriormente.
+### 3. Subir Archivos Web (PHP)
+1.  En el Administrador de Archivos, vaya a `public_html`.
+2.  Suba todo el contenido de la carpeta `public_html` extraída del zip (`index.php`, `admin.php`, carpetas `src`, `config`, etc.).
+3.  Asegúrese de que `index.php` esté en la raíz de `public_html` (o en la subcarpeta donde quiera instalar el sistema).
 
-## Requisitos
-*   PHP 7.4+
-*   MySQL 5.7+
-*   Node.js 14+ (Para audio)
-*   HTTPS (Requerido para micrófono)
+### 4. Ejecutar el Instalador
+1.  Abra su navegador y visite su sitio web (ej: `https://sudominio.com`).
+2.  Será redirigido al instalador.
+3.  Ingrese los datos de su base de datos MySQL (créela en cPanel > Bases de Datos MySQL si aún no lo ha hecho).
+4.  Ingrese la URL de la aplicación Node.js que copió en el paso 2 (ej: `https://sudominio.com/radio-signal`).
+5.  Complete la instalación.
+
+## Solución de Problemas
+*   **Error "package.json missing":** Asegúrese de subir la carpeta `server` FUERA de `public_html` y que contenga el archivo `package.json`.
+*   **Error de conexión DB:** Verifique usuario y contraseña en cPanel.

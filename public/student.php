@@ -1,5 +1,12 @@
 <?php
-require_once __DIR__ . '/../src/auth.php';
+// public/student.php
+
+if (file_exists(__DIR__ . '/src/auth.php')) {
+    require_once __DIR__ . '/src/auth.php';
+} else {
+    require_once __DIR__ . '/../src/auth.php';
+}
+
 require_login();
 ?>
 <!DOCTYPE html>
@@ -65,7 +72,7 @@ require_login();
 </div>
 
 <script>
-const API = '../src/api.php';
+const API = 'src/api.php'; // Updated to flat path
 
 async function loadAssignment() {
     try {

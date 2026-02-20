@@ -2,14 +2,34 @@
 // public/install/index.php
 // Web Installer for Red Cross Radio Simulation
 
-$configFile = __DIR__ . '/../../config/db.php';
-$schemaFile = __DIR__ . '/../../database.sql';
+$configFile = null;
+$schemaFile = null;
+
+// Determine paths for flat (cPanel) or nested (Dev) structure
+if (file_exists(__DIR__ . '/../config/db.php')) {
+    // Flat: public_html/install/index.php -> public_html/config/db.php
+    $configFile = __DIR__ . '/../config/db.php';
+} elseif (file_exists(__DIR__ . '/../../config/db.php')) {
+    // Nested: public/install/index.php -> ../config/db.php
+    $configFile = __DIR__ . '/../../config/db.php';
+} else {
+    // Attempt creation in flat structure by default if dir exists
+    if (is_dir(__DIR__ . '/../config')) {
+        $configFile = __DIR__ . '/../config/db.php';
+    } else {
+        // Create dir if possible? Usually not writable. Assume flat.
+        $configFile = __DIR__ . '/../config/db.php';
+    }
+}
+
+if (file_exists(__DIR__ . '/../database.sql')) {
+    $schemaFile = __DIR__ . '/../database.sql';
+} elseif (file_exists(__DIR__ . '/../../database.sql')) {
+    $schemaFile = __DIR__ . '/../../database.sql';
+}
 
 // Check if already installed
-if (file_exists($configFile)) {
-    // Basic check: file content might just be a placeholder or empty, but let's assume existence means installed
-    // Or we can check if it has valid credentials.
-    // Let's just warn and allow overwrite if they insist, or redirect to home.
+if ($configFile && file_exists($configFile)) {
     $installed = true;
 } else {
     $installed = false;
@@ -28,7 +48,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $adminPass = $_POST['admin_pass'] ?? 'admin123';
     $adminEmail = $_POST['admin_email'] ?? 'admin@cruzroja.org';
 
-    $signalUrl = $_POST['signal_url'] ?? ''; // Optional, or put in JS config later
+    $signalUrl = $_POST['signal_url'] ?? '';
 
     if (empty($name) || empty($user) || empty($adminUser) || empty($adminPass)) {
         $message = "Please fill all required fields.";
@@ -50,48 +70,38 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $pdo = new PDO($dsn, $user, $pass, $options);
 
             // 2. Read Schema
-            if (!file_exists($schemaFile)) {
+            if (!$schemaFile || !file_exists($schemaFile)) {
                 throw new Exception("Schema file database.sql not found!");
             }
             $schema = file_get_contents($schemaFile);
 
-            // 3. Execute Schema (Split by statements)
-            // Remove comments to avoid issues with simple split if any --
-            // Simple split by ';' might be fragile if stored procedures exist, but for simple schema it's fine.
+            // 3. Execute Schema
             if (getenv('APP_ENV') !== 'local_test') {
                 $pdo->exec("SET FOREIGN_KEY_CHECKS=0");
             } else {
-                // SQLite specific tweaks
                 $schema = str_replace('INT AUTO_INCREMENT PRIMARY KEY', 'INTEGER PRIMARY KEY AUTOINCREMENT', $schema);
                 $schema = str_replace('TIMESTAMP DEFAULT CURRENT_TIMESTAMP', 'DATETIME DEFAULT CURRENT_TIMESTAMP', $schema);
             }
 
-            // Remove the default admin insert from schema if present to use custom one
-            // Or just run schema and delete/update later.
-            // Let's run the schema as is.
             $statements = explode(';', $schema);
             foreach ($statements as $sql) {
                 if (trim($sql)) {
                     try {
                         $pdo->exec($sql);
                     } catch (PDOException $e) {
-                        // Ignore "table exists" if overwriting? Or throw?
-                        // Let's continue.
+                        // Ignore existing
                     }
                 }
             }
 
             // 4. Create/Update Admin User
-            // Delete old admin if exists (from schema default insert)
             $pdo->exec("DELETE FROM users WHERE username = 'admin' OR role_id = 1");
 
-            // Get Admin Role ID (usually 1, but let's fetch)
             $stmt = $pdo->prepare("SELECT id FROM roles WHERE name = 'admin'");
             $stmt->execute();
             $roleId = $stmt->fetchColumn();
 
             if (!$roleId) {
-                // If roles table empty for some reason, re-insert roles
                  $pdo->exec("INSERT INTO roles (name, description) VALUES ('admin', 'Administrator'), ('student', 'Student'), ('operator', 'Operator')");
                  $roleId = $pdo->lastInsertId();
             }
@@ -101,6 +111,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt->execute([$adminUser, $adminEmail, $hash, $roleId]);
 
             // 5. Write Config File
+            // Ensure dir exists
+            $configDir = dirname($configFile);
+            if (!is_dir($configDir)) mkdir($configDir, 0755, true);
+
             $configContent = "<?php\n" .
                              "// config/db.php\n" .
                              "// Auto-generated by Installer\n\n" .
@@ -127,11 +141,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                  throw new Exception("Could not write to config/db.php. Check permissions.");
             }
 
-            // 6. Handle Signaling URL (Optional - usually goes into JS file or DB settings table)
-            // For now, let's just save it to a simple JS config file in public/js/config.js
+            // 6. Handle Signaling URL
             if ($signalUrl) {
                 $jsConfig = "window.SIGNALING_SERVER_CONFIG = " . var_export($signalUrl, true) . ";";
-                file_put_contents(__DIR__ . '/../js/config.js', $jsConfig);
+                // Try flat path first
+                $jsPath = __DIR__ . '/../js/config.js';
+                if (!is_dir(dirname($jsPath))) {
+                     // Try nested
+                     $jsPath = __DIR__ . '/../../public/js/config.js';
+                }
+                // Ensure js dir exists if flat path chosen
+                if (!is_dir(dirname($jsPath))) mkdir(dirname($jsPath), 0755, true);
+
+                file_put_contents($jsPath, $jsConfig);
             }
 
             $message = "Installation Successful! <a href='../index.php'>Go to Login</a>";

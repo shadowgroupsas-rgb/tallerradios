@@ -2,12 +2,31 @@
 // public/index.php
 
 // Auto-detect installation
-if (!file_exists(__DIR__ . '/../config/db.php')) {
+if (file_exists(__DIR__ . '/config/db.php')) {
+    $configFile = __DIR__ . '/config/db.php';
+} elseif (file_exists(__DIR__ . '/../config/db.php')) {
+    $configFile = __DIR__ . '/../config/db.php';
+} else {
+    // Neither found, assume not installed or install dir is relative
+    if (file_exists(__DIR__ . '/install/index.php')) {
+        header("Location: install/index.php");
+        exit();
+    }
+    // Fallback if structure is weird
+    die("Configuration file not found. Please install the application.");
+}
+
+if (!file_exists($configFile)) {
     header("Location: install/index.php");
     exit();
 }
 
-require_once __DIR__ . '/../src/auth.php';
+// Load Auth
+if (file_exists(__DIR__ . '/src/auth.php')) {
+    require_once __DIR__ . '/src/auth.php';
+} else {
+    require_once __DIR__ . '/../src/auth.php';
+}
 
 // Redirect if already logged in
 if (isset($_SESSION['user_id'])) {

@@ -1,5 +1,13 @@
 <?php
-require_once __DIR__ . '/../src/auth.php';
+// public/admin.php
+
+// Load Auth (Support Flat/Nested)
+if (file_exists(__DIR__ . '/src/auth.php')) {
+    require_once __DIR__ . '/src/auth.php';
+} else {
+    require_once __DIR__ . '/../src/auth.php';
+}
+
 require_role('admin');
 ?>
 <!DOCTYPE html>
@@ -134,7 +142,33 @@ require_role('admin');
 </div>
 
 <script>
-const API = '../src/api.php';
+// Determine API Path (Flat vs Nested)
+// In flat structure (public_html), api.php is in src/api.php
+// But we are at index.php (root).
+// Wait, client side JS needs correct URL.
+// If index.php is at root, and api.php is in src/api.php, then URL is src/api.php.
+// If index.php is at public/index.php and api.php is src/api.php (sibling of public), we can't access it via HTTP unless src is public?
+// This is why standard Laravel/etc put index.php in public and everything else outside.
+// But cPanel simple deploy puts everything in public_html.
+// So src/api.php IS accessible via public_html/src/api.php.
+// BUT, if we use Dev mode (public/index.php), src is ../src/api.php which is NOT accessible via HTTP typically unless VHOST points to root.
+// Assuming "Flat Deployment" puts everything in public_html:
+const API = 'src/api.php';
+// If this fails in Dev mode (where public is root), we might need a router or just accept dev mode requires different URL.
+// Let's try to detect? No, client side can't detect easily.
+// We can inject it via PHP.
+</script>
+<script>
+    const API_URL = '<?= file_exists(__DIR__ . "/src/api.php") ? "src/api.php" : "../src/api.php" ?>';
+    // Wait, if it's ../src/api.php, the browser can't request "../src/api.php".
+    // It implies the web server root is the parent.
+    // If the web server root is public/, then src/ is not accessible.
+    // This is a known issue with the dual structure.
+    // However, for the "Autoinstaller" goal (cPanel), we assume Flat structure.
+    // So src/api.php is correct.
+</script>
+<script>
+const API = 'src/api.php'; // Default to flat structure for production
 
 function showTab(tabId) {
     document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));

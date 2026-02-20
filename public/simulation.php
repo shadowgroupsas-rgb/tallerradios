@@ -1,5 +1,12 @@
 <?php
-require_once __DIR__ . '/../src/auth.php';
+// public/simulation.php
+
+if (file_exists(__DIR__ . '/src/auth.php')) {
+    require_once __DIR__ . '/src/auth.php';
+} else {
+    require_once __DIR__ . '/../src/auth.php';
+}
+
 require_login();
 
 $scenario_id = $_GET['scenario'] ?? 0;
