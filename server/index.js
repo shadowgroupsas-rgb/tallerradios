@@ -10,6 +10,11 @@ const cors = require('cors');
 const app = express();
 app.use(cors());
 
+// Health Check for cPanel
+app.get('/', (req, res) => {
+    res.send('Radio Signaling Server Running');
+});
+
 const server = http.createServer(app);
 const io = new Server(server, {
     cors: {

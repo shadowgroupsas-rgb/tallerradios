@@ -1,0 +1,4 @@
+server/node_modules/
+public_html/
+cruzroja_radio_deploy.zip
+*.sqlite
